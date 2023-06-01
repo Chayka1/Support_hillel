@@ -16,7 +16,6 @@ def filter_by_keys(source, keys):
     for k, v in source.items():
         if k in keys:
             filtered_data[k] = v
-    
     return filtered_data
 
 
@@ -29,11 +28,8 @@ class Pokemon:
     base_experience: int
 
     @classmethod
-    def from_raw_date(cls, raw_date):
-        filtered_data = filter_by_keys(
-        raw_date,
-        Pokemon.__dataclass_fields__.keys()
-    )
+    def from_raw_data(cls, raw_data):
+        filtered_data = filter_by_keys(raw_data, Pokemon.__dataclass_fields__.keys())
         return cls(**filtered_data)
 
 
@@ -42,11 +38,11 @@ POKEMONS: dict[str, list[Pokemon, datetime]] = {}
 
 
 def get_pokemon_from_api(name):
-    url = settings.POKEAPI_BASE_URL + f'/{name}'
+    url = settings.POKEAPI_BASE_URL + f"/{name}"
     response = requests.get(url)
-    raw_date = response.json()
+    raw_data = response.json()
 
-    return Pokemon.from_raw_date(raw_date)
+    return Pokemon.from_raw_data(raw_data)
 
 
 def _get_pokemon(name):
@@ -63,7 +59,7 @@ def _get_pokemon(name):
 
 
 def delete_pokemon_by_cache(request, name):
-    if name in POKEMONS:    
+    if name in POKEMONS:
         del POKEMONS[name]
     else:
         None
@@ -71,56 +67,46 @@ def delete_pokemon_by_cache(request, name):
 
 @csrf_exempt
 def get_pokemon(request, name):
-    if request.method == 'GET':
+    if request.method == "GET":
         pokemon = _get_pokemon(name)
         return HttpResponse(
-            content_type='application/json',
-            content=json.dumps(asdict(pokemon))
+            content_type="application/json", content=json.dumps(asdict(pokemon))
         )
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         delete_pokemon_by_cache(request, name)
         return HttpResponse()
-        
+
 
 def get_pokemon_for_mobile(request, name):
     pokemon = _get_pokemon(name)
 
-    result = filter_by_keys(
-        asdict(pokemon),
-        ['id', 'name', 'base_experience']
-    )
+    result = filter_by_keys(asdict(pokemon), ["id", "name", "base_experience"])
 
-    return HttpResponse(
-        content_type = 'application/json',
-        content=json.dumps(result)
-    )
+    return HttpResponse(content_type="application/json", content=json.dumps(result))
 
 
-def returns_all_pokemons_by_cache(request):
+def return_all_pokemons_by_cache(request):
     pokemons = {}
 
     for name, info in POKEMONS.items():
         pokemon, created_at = info
         pokemons[name] = asdict(pokemon)
 
-    return HttpResponse(
-        content_type='application/json',
-        content=json.dumps(pokemons)
-    )
+    return HttpResponse(content_type="application/json", content=json.dumps(pokemons))
 
 
 def get_csrf_token(request):
     token = get_token(request)
     response = HttpResponse(content=token)
-    response["Access-Control-Allow-Origin"] = "*"  
+    response["Access-Control-Allow-Origin"] = "*"
     return response
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/pokemon/<name>/', get_pokemon),
-    path('api/pokemon/mobile/<name>/', get_pokemon_for_mobile),
-    path('api/pokemon/<name>/', delete_pokemon_by_cache),
-    path('api/pokemons/', returns_all_pokemons_by_cache),
-    path('api/csrf_token/', get_csrf_token)
+    path("admin/", admin.site.urls),
+    path("api/pokemon/<name>/", get_pokemon),
+    path("api/pokemon/mobile/<name>/", get_pokemon_for_mobile),
+    path("api/pokemon/delete/<name>/", delete_pokemon_by_cache),
+    path("api/pokemons/", return_all_pokemons_by_cache),
+    path("api/csrf_token/", get_csrf_token),
 ]
