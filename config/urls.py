@@ -29,7 +29,9 @@ class Pokemon:
 
     @classmethod
     def from_raw_data(cls, raw_data):
-        filtered_data = filter_by_keys(raw_data, Pokemon.__dataclass_fields__.keys()) # noqa
+        filtered_data = filter_by_keys(
+            raw_data, Pokemon.__dataclass_fields__.keys()
+        )  # noqa
         return cls(**filtered_data)
 
 
@@ -70,7 +72,7 @@ def get_pokemon(request, name):
     if request.method == "GET":
         pokemon = _get_pokemon(name)
         return HttpResponse(
-            content_type="application/json", content=json.dumps(asdict(pokemon)) # noqa
+            content_type="application/json", content=json.dumps(asdict(pokemon))  # noqa
         )
     elif request.method == "DELETE":
         delete_pokemon_by_cache(request, name)
@@ -82,7 +84,9 @@ def get_pokemon_for_mobile(request, name):
 
     result = filter_by_keys(asdict(pokemon), ["id", "name", "base_experience"])
 
-    return HttpResponse(content_type="application/json", content=json.dumps(result)) # noqa
+    return HttpResponse(
+        content_type="application/json", content=json.dumps(result)
+    )  # noqa
 
 
 def return_all_pokemons_by_cache(request):
@@ -92,7 +96,9 @@ def return_all_pokemons_by_cache(request):
         pokemon, created_at = info
         pokemons[name] = asdict(pokemon)
 
-    return HttpResponse(content_type="application/json", content=json.dumps(pokemons)) # noqa
+    return HttpResponse(
+        content_type="application/json", content=json.dumps(pokemons)
+    )  # noqa
 
 
 def get_csrf_token(request):
