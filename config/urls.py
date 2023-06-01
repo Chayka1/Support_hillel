@@ -1,15 +1,14 @@
-from datetime import datetime, timedelta
 import json
+from dataclasses import asdict, dataclass
+from datetime import datetime, timedelta
+
 import requests
-
-from django.contrib import admin
-from django.urls import path
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.middleware.csrf import get_token
 from django.conf import settings
-
-from dataclasses import dataclass, asdict
+from django.contrib import admin
+from django.http import HttpResponse
+from django.middleware.csrf import get_token
+from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 
 def filter_by_keys(source, keys):
