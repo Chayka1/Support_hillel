@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'l*-%+2%l5xu4tg5t4oz&jo*@1_z55g2k9!(5t9)w+kvct-r&wm'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
+CSRF_COOKIE_SECURE = False
 
 
 INSTALLED_APPS = [
@@ -92,3 +93,5 @@ STATIC_URL = '/static/'
 
 
 POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2/pokemon'
+
+
