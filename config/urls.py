@@ -5,10 +5,9 @@ import requests
 from django.contrib import admin
 from django.urls import path
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
 from django.conf import settings
-
-
-POKEMONS = {}
 
 
 def filter_by_keys(source, keys):
@@ -63,14 +62,25 @@ def _get_pokemon(name):
     return pokemon
 
 
+def delete_pokemon_by_cache(request, name):
+    if name in POKEMONS:    
+        del POKEMONS[name]
+    else:
+        None
+
+
+@csrf_exempt
 def get_pokemon(request, name):
-    pokemon = _get_pokemon(name)
-
-    return HttpResponse(
-        content_type = 'application/json',
-        content=json.dumps(asdict(pokemon))
-    )
-
+    if request.method == 'GET':
+        pokemon = _get_pokemon(name)
+        return HttpResponse(
+            content_type='application/json',
+            content=json.dumps(asdict(pokemon))
+        )
+    elif request.method == 'DELETE':
+        delete_pokemon_by_cache(request, name)
+        return HttpResponse()
+        
 
 def get_pokemon_for_mobile(request, name):
     pokemon = _get_pokemon(name)
@@ -86,15 +96,6 @@ def get_pokemon_for_mobile(request, name):
     )
 
 
-def delete_pokemon_by_cache(request, name):
-    if name in POKEMONS:    
-        del POKEMONS[name]
-    else:
-        None
-
-    return HttpResponse()
-
-
 def returns_all_pokemons_by_cache(request):
     pokemons = {}
 
@@ -108,10 +109,18 @@ def returns_all_pokemons_by_cache(request):
     )
 
 
+def get_csrf_token(request):
+    token = get_token(request)
+    response = HttpResponse(content=token)
+    response["Access-Control-Allow-Origin"] = "*"  
+    return response
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/pokemon/<name>/', get_pokemon),
     path('api/pokemon/mobile/<name>/', get_pokemon_for_mobile),
-    path('api/pokemon/delete/<name>/', delete_pokemon_by_cache),
-    path('api/pokemons/', returns_all_pokemons_by_cache)
+    path('api/pokemon/<name>/', delete_pokemon_by_cache),
+    path('api/pokemons/', returns_all_pokemons_by_cache),
+    path('api/csrf_token/', get_csrf_token)
 ]
