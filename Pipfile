@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 django = "~=4.2"
+requests = "*"
+flake8 = "*"
+black = "*"
+isort = "*"
 
 [dev-packages]
 flake8 = "*"
