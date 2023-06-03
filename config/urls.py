@@ -6,9 +6,7 @@ import requests
 from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponse
-from django.middleware.csrf import get_token
 from django.urls import path
-from django.views.decorators.csrf import csrf_exempt
 
 
 def filter_by_keys(source, keys):
@@ -68,7 +66,6 @@ def delete_pokemon_by_cache(request, name):
         None
 
 
-@csrf_exempt
 def get_pokemon(request, name):
     if request.method == "GET":
         pokemon = _get_pokemon(name)
@@ -102,18 +99,10 @@ def return_all_pokemons_by_cache(request):
     )  # noqa
 
 
-def get_csrf_token(request):
-    token = get_token(request)
-    response = HttpResponse(content=token)
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/pokemon/<name>/", get_pokemon),
     path("api/pokemon/mobile/<name>/", get_pokemon_for_mobile),
     path("api/pokemon/delete/<name>/", delete_pokemon_by_cache),
     path("api/pokemons/", return_all_pokemons_by_cache),
-    path("api/csrf_token/", get_csrf_token),
 ]
