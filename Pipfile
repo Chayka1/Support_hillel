@@ -5,13 +5,12 @@ name = "pypi"
 
 [packages]
 django = "~=4.2"
+
+[dev-packages]
 requests = "*"
 flake8 = "*"
 black = "*"
 isort = "*"
-
-[dev-packages]
-flake8 = "*"
 
 [requires]
 python_version = "3.11"
