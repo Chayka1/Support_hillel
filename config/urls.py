@@ -1,8 +1,8 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
+from core.api import create_user
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("config.pokemons")),
-    path("", include("core.create_user")),
+    path("users", create_user),
 ]

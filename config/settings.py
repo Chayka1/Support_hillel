@@ -83,3 +83,5 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon"
+
+AUTH_USER_MODEL = "core.User"
