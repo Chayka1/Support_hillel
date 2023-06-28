@@ -5,10 +5,8 @@ from django.http import HttpResponse, JsonResponse
 
 from core.errors import SerializerError
 from core.models import User
-from core.serializers import (
-    UserCreateRequestSerializer,
-    UserCreateResponseSerializer,
-)  # noqa
+from core.serializers import UserCreateRequestSerializer  # noqa
+from core.serializers import UserCreateResponseSerializer
 
 
 def base_error_handler(func: Callable):
