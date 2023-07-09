@@ -22,8 +22,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "core",
+    "users",
     "authentication",
+    "tickets",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -95,7 +96,7 @@ STATIC_URL = "/static/"
 
 POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon"
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "users.User"
 
 
 REST_FRAMEWORK = {
