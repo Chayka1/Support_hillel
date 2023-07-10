@@ -1,9 +1,11 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from tickets.models import Ticket
-from tickets.serializers import TicketSerializer
+from tickets.permissions import IsOwner, RoleIsAdmin, RoleIsManager, RoleIsUser
+from tickets.serializers import TicketAssignSerializer, TicketSerializer
 
 
 class TicketAPIViewSet(ModelViewSet):
@@ -11,22 +13,32 @@ class TicketAPIViewSet(ModelViewSet):
     serializer_class = TicketSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [RoleIsAdmin | RoleIsManager | RoleIsUser]
+        elif self.action == "create":
+            permission_classes = [RoleIsUser]
+        elif self.action == "retrieve":
+            permission_classes = [IsOwner | RoleIsAdmin | RoleIsManager]
+        elif self.action == "update":
+            permission_classes = [RoleIsAdmin | RoleIsManager]
+        elif self.action == "destroy":
+            permission_classes = [RoleIsAdmin | RoleIsManager]
+        elif self.action == "take":
+            permission_classes = [RoleIsManager]
+        else:
+            permission_classes = []
 
-class TicketCreateAPIView(CreateAPIView):
-    pass
+        return [permission() for permission in permission_classes]
 
+    @action(detail=True, methods=["post"])
+    def take(self, request, pk):
+        ticket = self.get_object()
 
-class TicketListAPIView(CreateAPIView):
-    pass
+        serializer = TicketAssignSerializer(
+            data={"manager_id": request.user.id}
+        )  # noqa
+        serializer.is_valid()
+        ticket = serializer.assign(ticket)
 
-
-class TicketRetrieveAPIView(CreateAPIView):
-    pass
-
-
-class TicketDeleteAPIView(CreateAPIView):
-    pass
-
-
-class TicketUpdateAPIView(CreateAPIView):
-    pass
+        return Response(TicketSerializer(ticket).data)
