@@ -20,6 +20,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "rest_framework",
+    "drf_yasg",
 ]
 
 LOCAL_APPS = [
@@ -114,6 +115,11 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),  # noqa
 }
+
+if DEBUG is True:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    )
 
 
 SIMPLE_JWT = {
