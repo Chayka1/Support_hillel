@@ -60,7 +60,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Database
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -96,7 +96,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon"
 
 AUTH_USER_MODEL = "users.User"
 
@@ -127,3 +126,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", default="redis://broker:6379/0")
