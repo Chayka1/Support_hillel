@@ -1,3 +1,5 @@
+from time import sleep
+
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -8,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from config.celery import celery_app
 from tickets.models import Message, Ticket
 from tickets.permissions import IsOwner, RoleIsAdmin, RoleIsManager, RoleIsUser
 # fmt: off
@@ -17,6 +20,13 @@ from tickets.serializers import (MessageSerializer, TicketAssignSerializer,
 from users.constants import Role
 
 User = get_user_model()
+
+
+@celery_app.task
+def send_email():
+    print("📭 Sending email")
+    sleep(10)
+    print("✅ Email sent")
 
 
 class TicketAPIViewSet(ModelViewSet):
