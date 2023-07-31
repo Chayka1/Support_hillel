@@ -128,4 +128,6 @@ SIMPLE_JWT = {
 }
 
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", default="redis://broker:6379/0")
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL", default="redis://broker:6379/0"
+)  # noqa
