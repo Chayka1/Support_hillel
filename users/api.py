@@ -3,6 +3,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from users.models import User
 from users.serializers import UserCreateSerializer  # noqa
 from users.serializers import UserRegistrationResponseSerializer
 
@@ -27,3 +28,8 @@ class UserCreateAPIView(CreateAPIView):
             status=status.HTTP_201_CREATED,
             headers=headers,
         )
+
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserRegistrationResponseSerializer(users, many=True)
+        return Response(serializer.data)
