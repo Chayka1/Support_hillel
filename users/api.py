@@ -3,6 +3,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from users.constants import Role
 from users.models import User
 from users.serializers import UserCreateSerializer  # noqa
 from users.serializers import UserRegistrationResponseSerializer
@@ -31,5 +32,14 @@ class UserCreateAPIView(CreateAPIView):
 
     def get(self, request, format=None):
         users = User.objects.all()
-        serializer = UserRegistrationResponseSerializer(users, many=True)
-        return Response(serializer.data)
+        user = self.request.user
+        if user.role == Role.ADMIN or user.role == Role.MANAGER:
+            serializer = UserRegistrationResponseSerializer(users, many=True)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {
+                    "message": "You don't have permission to access this resource."  # noqa
+                },
+                status=403,
+            )
