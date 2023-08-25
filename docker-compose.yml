@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  # db:
+  #   image: postgres
+  #   container_name: hillel_support_db
+  #   ports:
+  #     - 5432:5432
+  #   env_file: .env
+  #   volumes:
+  #     - "pg_data:/var/lib/postgresql/data"
+
+  broker:
+    image: redis
+    container_name: hillel_support_broker
+    ports:
+      - 6379:6379
+
+  application: &app
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: hillel_support_application
+    container_name: hillel_support_web
+    # depends_on:
+    #   - db
+    #   - broker
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app/
+    # env_file: .env
+
+  worker:
+    <<: *app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: hillel_support_worker
+    ports: []
+    command: bash -c "celery -A config.celery worker -l INFO"
+    # restart: always
+
+
+# volumes:
+#   pg_data: {}
+
+# watchmedo auto-restart --pattern='*.py' --recursive -- 

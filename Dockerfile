@@ -11,4 +11,4 @@ RUN apt-get update \
 
 RUN pipenv sync --dev --system
 
-CMD bash
+CMD python manage.py migrate && gunicorn config.wsgi --reload --bind 0.0.0.0:8000
