@@ -3,7 +3,7 @@ from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = "l*-%+2%l5xu4tg5t4oz&jo*@1_z55g2k9!(5t9)w+kvct-r&wm"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", default="invalid")
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CSRF_COOKIE_SECURE = False
@@ -122,7 +122,9 @@ if DEBUG is True:
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        seconds=int(os.getenv("JWT_ACCESS_TOKEN_LIFETIME", default=100))
+    ),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
