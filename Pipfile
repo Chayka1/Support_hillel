@@ -9,6 +9,7 @@ djangorestframework = "~=3.14"
 djangorestframework-simplejwt = "~=5.2"
 gunicorn = "~=21.2"
 celery = {version = "==5.3.1", extras = ["redis"]}
+psycopg2-binary = "~=2.9"
 
 [dev-packages]
 requests = "*"
